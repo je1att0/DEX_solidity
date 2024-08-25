@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
-import "@openzeppelin-contracts/token/ERC20/ERC20.sol";
-import "../src/Dex.sol";
+import {Test} from "forge-std/Test.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {Dex} from "../src/DEX.sol";
 
 contract CustomERC20 is ERC20 {
     constructor(string memory tokenName) ERC20(tokenName, tokenName) {
@@ -146,6 +146,7 @@ contract DexTest is Test {
         // usedX = 1000 ether * 100
         // usedY = 1000 ether * 100
 
+
         uint poolAmountX = 1000 ether + 1000 ether * 2; // initial value
         poolAmountX += 1000 ether * 100;
         uint poolAmountY = 1000 ether + 1000 ether * 2; // initial value
@@ -158,7 +159,8 @@ contract DexTest is Test {
         emit log_named_uint("remaining poolAmountY", poolAmountY);
 
         (uint rx, uint ry) = dex.removeLiquidity(firstLPReturn, 0, 0);
-
+        emit log_named_uint("poolAmountX * 9999 / 10000 / 3", poolAmountX * 9999 / 10000 / 3);
+        emit log_named_uint("poolAmountX * 10001 / 10000 / 3", poolAmountX * 10001 / 10000 / 3);
         bool successX = rx <= (poolAmountX * 10001 / 10000 / 3) && rx >= (poolAmountX * 9999 / 10000 / 3); // allow 0.01%;
         bool successY = ry <= (poolAmountY * 10001 / 10000 / 3) && ry >= (poolAmountY * 9999 / 10000 / 3); // allow 0.01%;
         assertTrue(successX, "remove liquidity after swap error; rx");
@@ -175,7 +177,7 @@ contract DexTest is Test {
         uint poolAmountX = 60000 ether + 3000 ether;
         uint poolAmountY = 80000 ether + 4000 ether;
 
-
+        // k = 90000 * 120000 = 10800000000    
         int expectedOutput = -(int(poolAmountX * poolAmountY) / int(poolAmountX + 300 ether)) + int(poolAmountY);
         expectedOutput = expectedOutput * 999 / 1000; // 0.1% fee
         uint uExpectedOutput = uint(expectedOutput);
